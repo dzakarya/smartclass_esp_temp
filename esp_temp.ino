@@ -1,7 +1,10 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-
+#include <DHT.h>
+#define DHTPIN D7
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
 // Update these with values suitable for your network.
 
 const char* ssid = "Jack";
@@ -67,8 +70,7 @@ void reconnect() {
 
 
 float temperature(){
-  float v = (analogRead(thermistorPin)*5.00)/1023;
-  float temp = (v*20000)/(5-v);
+  float v = dht.readTemperature();
   return v;
 }
 
@@ -77,6 +79,7 @@ void setup() {
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
+  dht.begin();
 }
 
 void loop() {
